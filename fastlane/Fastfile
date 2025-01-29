@@ -25,6 +25,7 @@ platform :ios do
       duration: 1200,
       in_house: false
     )
+
     produce(
       app_identifier: "com.seedinnovate.MySwiftUIApp",
       app_name: "MySwiftUIApp Beta",
@@ -33,12 +34,22 @@ platform :ios do
       sku: "#{Time.now.to_i}",
       team_id: "3LRSR6TS2H"
     )
-    increment_build_number(xcodeproj: "MySwiftUIApp.xcodeproj")
+
+    # Increment both version and build number
+    increment_version_number(
+      version_number: "1.0.0" # Specify your version number here
+    )
+    increment_build_number(
+      build_number: Time.now.strftime("%Y%m%d%H%M").to_i # Use timestamp as build number
+    )
+
     match(type: "appstore", readonly: true)
+    
     build_app(
       scheme: "MySwiftUIApp",
       export_method: "app-store"
     )
+    
     upload_to_testflight
   end
 end
