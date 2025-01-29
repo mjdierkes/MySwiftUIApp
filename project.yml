@@ -1,0 +1,35 @@
+configs:
+  Debug: debug
+  Release: release
+
+name: MySwiftUIApp
+
+options:
+  bundleIdPrefix: com.example
+  deploymentTarget:
+    iOS: 16.0
+
+targetTemplates:
+  app-template:
+    type: application
+    platform: iOS
+    sources:
+      - Sources
+
+targets:
+  MySwiftUIApp:
+    templates:
+      - app-template
+    settings:
+      base:
+        PRODUCT_NAME: ${target_name}
+        PRODUCT_BUNDLE_IDENTIFIER: ${bundleIdPrefix}.${target_name}
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        DEVELOPMENT_ASSET_PATHS: "Resources"
+        MARKETING_VERSION: 1.0.0
+        CURRENT_PROJECT_VERSION: 1
+        INFOPLIST_KEY_CFBundleDisplayName: ${target_name}
+        INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight

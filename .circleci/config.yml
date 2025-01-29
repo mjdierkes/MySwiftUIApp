@@ -1,0 +1,22 @@
+version: 2.1
+
+jobs:
+  build-and-test:
+    macos:
+      xcode: 15.2.0
+    steps:
+      - checkout
+      - run:
+          name: Build and Test
+          command: |
+            xcodebuild clean test \
+              -scheme MySwiftUIApp \
+              -destination 'platform=iOS Simulator,name=iPhone 15,OS=17.2' \
+              -sdk iphonesimulator \
+              CODE_SIGNING_REQUIRED=NO
+
+workflows:
+  version: 2
+  build-test:
+    jobs:
+      - build-and-test 
