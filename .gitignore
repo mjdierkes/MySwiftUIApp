@@ -9,3 +9,4 @@ MySwiftUIApp.xcodeproj/project.xcworkspace/contents.xcworkspacedata
 .ipa
 .zip
 .env
+*.p8
