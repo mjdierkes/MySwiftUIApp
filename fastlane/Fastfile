@@ -39,9 +39,7 @@ platform :ios do
     increment_version_number(
       version_number: "1.0.0" # Specify your version number here
     )
-    increment_build_number(
-      build_number: Time.now.strftime("%Y%m%d%H%M").to_i # Use timestamp as build number
-    )
+    increment_build_number # Auto-increment by 1
 
     match(type: "appstore", readonly: true)
     
@@ -51,5 +49,64 @@ platform :ios do
     )
     
     upload_to_testflight
+  end
+
+  desc "Push a new build to TestFlight for internal testing"
+  lane :internal do
+    app_store_connect_api_key(
+      key_id: ENV["ASC_KEY_ID"],
+      issuer_id: ENV["ASC_ISSUER_ID"],
+      key_filepath: ENV["ASC_KEY_FILEPATH"],
+      duration: 1200,
+      in_house: false
+    )
+
+    # Increment build number
+    increment_build_number # Auto-increment by 1
+
+    match(type: "appstore", readonly: true)
+    
+    build_app(
+      scheme: "MySwiftUIApp",
+      export_method: "app-store"
+    )
+    
+    # Upload to TestFlight and automatically distribute to internal testers
+    upload_to_testflight(
+      skip_waiting_for_build_processing: true,
+      distribute_external: false,
+      notify_external_testers: false,
+      changelog: "Internal test build",
+      groups: ["Internal Testers"]
+    )
+  end
+
+  desc "Add internal testers to TestFlight"
+  lane :add_internal_testers do |options|
+    # Ensure we have authentication set up
+    app_store_connect_api_key(
+      key_id: ENV["ASC_KEY_ID"],
+      issuer_id: ENV["ASC_ISSUER_ID"],
+      key_filepath: ENV["ASC_KEY_FILEPATH"],
+      duration: 1200,
+      in_house: false
+    )
+
+    # Add internal testers using Spaceship
+    Spaceship::ConnectAPI::BetaTester.create(
+      email: options[:emails],
+      first_name: options[:first_name],
+      last_name: options[:last_name]
+    )
+
+    # Add tester to the Internal Testers group
+    app = Spaceship::ConnectAPI::App.find("com.seedinnovate.MySwiftUIApp")
+    group = Spaceship::ConnectAPI::BetaGroup.find("Internal Testers") || Spaceship::ConnectAPI::BetaGroup.create(
+      name: "Internal Testers",
+      app_id: app.id
+    )
+
+    tester = Spaceship::ConnectAPI::BetaTester.find_by_email(options[:emails])
+    group.add_beta_tester(beta_tester_id: tester.id)
   end
 end
