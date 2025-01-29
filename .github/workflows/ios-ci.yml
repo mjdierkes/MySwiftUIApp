@@ -10,6 +10,8 @@ jobs:
   build-and-test:
     name: Build and Test
     runs-on: macos-latest
+    env:
+      DEVELOPMENT_TEAM: ${{ secrets.DEVELOPMENT_TEAM }}
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
@@ -41,6 +43,8 @@ jobs:
     needs: [build-and-test]
     runs-on: macos-latest
     if: github.event_name == 'push'
+    env:
+      DEVELOPMENT_TEAM: ${{ secrets.DEVELOPMENT_TEAM }}
     steps:
       - name: Check out repository
         uses: actions/checkout@v3

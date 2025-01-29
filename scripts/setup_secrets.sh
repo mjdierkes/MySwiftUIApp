@@ -26,6 +26,9 @@ set_secret() {
 }
 
 # Prompt for App Store Connect credentials
+echo "Please enter your Apple Developer Team ID (10-character string):"
+read -r DEVELOPMENT_TEAM
+
 echo "Please enter your App Store Connect API Key ID:"
 read -r API_KEY_ID
 
@@ -44,6 +47,7 @@ fi
 API_KEY=$(cat "$API_KEY_PATH")
 
 # Set the secrets
+set_secret "DEVELOPMENT_TEAM" "$DEVELOPMENT_TEAM"
 set_secret "APP_STORE_CONNECT_API_KEY_ID" "$API_KEY_ID"
 set_secret "APP_STORE_CONNECT_API_ISSUER_ID" "$ISSUER_ID"
 set_secret "APP_STORE_CONNECT_API_KEY" "$API_KEY"
